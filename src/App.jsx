@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
+import User from "./pages/User";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/layout/Navbar";
@@ -21,6 +22,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/user/:login" element={<User />} />
                 <Route path="/notFound" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
