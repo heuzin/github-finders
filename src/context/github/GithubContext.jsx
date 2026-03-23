@@ -23,28 +23,6 @@ export const GithubProvider = ({ children }) => {
 
   const setLoading = () => dispatch({ type: "SET_LOADING" });
 
-  // Get search results
-  const searchUsers = useCallback(async (text) => {
-    setLoading();
-
-    const params = new URLSearchParams({
-      q: text,
-    });
-
-    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-
-    const { items } = await response.json();
-
-    dispatch({
-      type: "GET_USERS",
-      payload: items,
-    });
-  }, []);
-
   // Get single user
   const getUser = useCallback(async (login) => {
     setLoading();
@@ -97,16 +75,13 @@ export const GithubProvider = ({ children }) => {
 
   const value = useMemo(
     () => ({
-      users: state.users,
-      loading: state.loading,
-      user: state.user,
-      repos: state.repos,
+      ...state,
+      dispatch,
       clearUsers,
-      searchUsers,
       getUser,
       getUserRepos,
     }),
-    [state, searchUsers, getUser, getUserRepos],
+    [state, getUser, getUserRepos],
   );
 
   return (
