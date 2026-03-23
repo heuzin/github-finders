@@ -12,6 +12,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -32,7 +33,7 @@ export const GithubProvider = ({ children }) => {
 
     const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       headers: {
-        authorization: `token ${GITHUB_TOKEN}`,
+        Authorization: `token ${GITHUB_TOKEN}`,
       },
     });
 
@@ -50,7 +51,7 @@ export const GithubProvider = ({ children }) => {
 
     const response = await fetch(`${GITHUB_URL}/users/${login}`, {
       headers: {
-        authorization: `token ${GITHUB_TOKEN}`,
+        Authorization: `token ${GITHUB_TOKEN}`,
       },
     });
 
@@ -66,6 +67,32 @@ export const GithubProvider = ({ children }) => {
     }
   }, []);
 
+  // Get user repos
+  const getUserRepos = useCallback(async (login) => {
+    setLoading();
+
+    const params = new URLSearchParams({
+      sort: "created",
+      per_page: 10,
+    });
+
+    const response = await fetch(
+      `${GITHUB_URL}/users/${login}/repos?${params}`,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    dispatch({
+      type: "GET_REPOS",
+      payload: data,
+    });
+  }, []);
+
   // Set loading
 
   const value = useMemo(
@@ -73,11 +100,13 @@ export const GithubProvider = ({ children }) => {
       users: state.users,
       loading: state.loading,
       user: state.user,
+      repos: state.repos,
       clearUsers,
       searchUsers,
       getUser,
+      getUserRepos,
     }),
-    [state, searchUsers, getUser],
+    [state, searchUsers, getUser, getUserRepos],
   );
 
   return (
